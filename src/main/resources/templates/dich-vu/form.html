@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Form dịch vụ</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="container">
+
+    <h1>Thông tin dịch vụ</h1>
+    <div class="card">
+        <form method="post" action="/dich-vu/luu" th:object="${item}">
+            <input type="hidden" th:field="*{maDichVu}">
+            <div class="form-row">
+                <label>Tên dịch vụ</label>
+                <input type="text" th:field="*{tenDichVu}" required>
+            </div>
+            <div class="form-row">
+                <label>Giá dịch vụ</label>
+                <input type="number" th:field="*{giaDichVu}" required>
+            </div>
+            <button class="btn" type="submit">Lưu</button>
+            <a class="btn secondary" href="/dich-vu">Quay lại</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>
