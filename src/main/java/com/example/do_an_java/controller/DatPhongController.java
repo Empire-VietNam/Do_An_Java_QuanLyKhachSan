@@ -5,6 +5,7 @@ import com.example.do_an_java.repository.CtDatPhongRepository;
 import com.example.do_an_java.repository.KhachHangRepository;
 import com.example.do_an_java.repository.NhanVienRepository;
 import com.example.do_an_java.repository.PhongRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +29,8 @@ public class DatPhongController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("items", ctDatPhongRepository.findAll());
+    public String list(@RequestParam(defaultValue = "0") int page, Model model, HttpServletRequest request) {
+        PaginationUtil.paginate(model, ctDatPhongRepository.findAll(), page, request);
         return "dat-phong/list";
     }
 

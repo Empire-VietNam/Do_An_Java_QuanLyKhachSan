@@ -11,29 +11,110 @@
 
     <h1>Quản lý phòng</h1>
     <div class="card">
-        <a class="btn" href="/phong/them">+ Thêm phòng</a>
-        <table class="table" style="margin-top:14px">
+        <div class="room-stats">
+            <div class="room-stat-item stat-empty">
+                <span>Phòng trống</span>
+                <strong th:text="${soPhongTrong}">0</strong>
+            </div>
+            <div class="room-stat-item stat-rented">
+                <span>Đang thuê</span>
+                <strong th:text="${soPhongDangThue}">0</strong>
+            </div>
+            <div class="room-stat-item stat-maintenance">
+                <span>Bảo trì</span>
+                <strong th:text="${soPhongBaoTri}">0</strong>
+            </div>
+        </div>
+
+        <form class="filter-panel" method="get" action="/phong">
+            <div class="filter-grid">
+                <div class="filter-field filter-code-field">
+                    <label>Mã phòng</label>
+                    <input type="number" name="maPhong" placeholder="Nhập mã phòng cần tìm" th:value="${maPhong}">
+                </div>
+
+                <div class="filter-field">
+                    <label>Loại phòng</label>
+                    <select name="maLoaiPhong">
+                        <option value="">Tất cả loại phòng</option>
+                        <option th:each="lp : ${loaiPhongs}"
+                                th:value="${lp.maLoaiPhong}"
+                                th:text="${lp.tenLoaiPhong}"
+                                th:selected="${maLoaiPhong == lp.maLoaiPhong}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label>Giá từ</label>
+                    <input type="number" name="giaTu" placeholder="300.000" th:value="${giaTu}">
+                </div>
+
+                <div class="filter-field">
+                    <label>Giá đến</label>
+                    <input type="number" name="giaDen" placeholder="4.000.000" th:value="${giaDen}">
+                </div>
+
+                <div class="filter-field">
+                    <label>Ngày nhận</label>
+                    <input type="date" name="ngayNhan" th:value="${ngayNhan}">
+                </div>
+
+                <div class="filter-field">
+                    <label>Ngày trả</label>
+                    <input type="date" name="ngayTra" th:value="${ngayTra}">
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button class="btn" type="submit">Tìm kiếm</button>
+                <a class="btn secondary" href="/phong">Làm mới</a>
+                <a class="btn add-room-btn" href="/phong/them">+ Thêm phòng</a>
+            </div>
+        </form>
+
+        <div class="alert" th:if="${dateError}" th:text="${dateError}"></div>
+        <table class="table room-table">
             <thead>
             <tr>
                 <th>Mã phòng</th>
                 <th>Loại phòng</th>
                 <th>Giá phòng</th>
+                <th>Trạng thái</th>
                 <th>Thao tác</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="item : ${items}">
-                <td th:text="${item.maPhong}"></td>
-                <td th:text="${item.loaiPhong != null ? item.loaiPhong.tenLoaiPhong : ''}"></td>
-                <td th:text="${item.loaiPhong != null ? item.loaiPhong.giaPhong : ''}"></td>
                 <td>
-                    <a class="btn small secondary" th:href="@{/phong/sua/{id}(id=${item.maPhong})}">Sửa</a>
-                    <a class="btn small danger" th:href="@{/phong/xoa/{id}(id=${item.maPhong})}"
-                       onclick="return confirm('Xóa phòng này?')">Xóa</a>
+                    <span class="room-code" th:text="${item.maPhong}"></span>
                 </td>
+                <td>
+                    <div class="room-type" th:text="${item.loaiPhong != null ? item.loaiPhong.tenLoaiPhong : 'Chưa có loại'}"></div>
+                </td>
+                <td class="price-cell"
+                    th:text="${item.loaiPhong != null && item.loaiPhong.giaPhong != null ? #numbers.formatInteger(item.loaiPhong.giaPhong, 0, 'POINT') + ' VND' : ''}">
+                </td>
+                <td>
+                    <span class="status-badge"
+                          th:classappend="${item.trangThai == 'Trống' ? ' status-empty' : (item.trangThai == 'Đã đặt' ? ' status-booked' : (item.trangThai == 'Đang thuê' ? ' status-rented' : ' status-maintenance'))}"
+                          th:text="${item.trangThai != null ? item.trangThai : 'Trống'}">
+                    </span>
+                </td>
+                <td>
+                    <div class="row-actions">
+                        <a class="btn small secondary" th:href="@{/phong/sua/{id}(id=${item.maPhong})}">Sửa</a>
+                        <a class="btn small danger" th:href="@{/phong/xoa/{id}(id=${item.maPhong})}"
+                           onclick="return confirm('Xóa phòng này?')">Xóa</a>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(items)}">
+                <td colspan="5" class="empty-row">Không có phòng phù hợp</td>
             </tr>
             </tbody>
         </table>
+        <div th:replace="~{fragments/pagination :: pagination}"></div>
     </div>
 </div>
 </body>

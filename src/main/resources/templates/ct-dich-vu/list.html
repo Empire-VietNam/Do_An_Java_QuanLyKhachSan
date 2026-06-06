@@ -25,11 +25,11 @@
             </thead>
             <tbody>
             <tr th:each="item : ${items}">
-                <td th:text="${item.maCtDichVu}"></td>
+                <td><span class="code-badge" th:text="${item.maCtDichVu}"></span></td>
                 <td th:text="${item.dichVu != null ? item.dichVu.tenDichVu : ''}"></td>
                 <td th:text="${item.ctDatPhong != null ? item.ctDatPhong.maCtDatPhong : ''}"></td>
                 <td th:text="${item.soLuong}"></td>
-                <td th:text="${item.tongTienDichVu}"></td>
+                <td class="price-cell" th:text="${item.tongTienDichVu != null ? #numbers.formatInteger(item.tongTienDichVu, 0, 'POINT') + ' VND' : ''}"></td>
                 <td>
                     <a class="btn small danger"
                        th:href="@{/ct-dich-vu/xoa(maDichVu=${item.dichVu.maDichVu}, maCtDatPhong=${item.ctDatPhong.maCtDatPhong})}"
@@ -38,6 +38,7 @@
             </tr>
             </tbody>
         </table>
+        <div th:replace="~{fragments/pagination :: pagination}"></div>
     </div>
 </div>
 </body>

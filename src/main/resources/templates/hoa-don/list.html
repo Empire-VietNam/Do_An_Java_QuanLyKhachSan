@@ -25,9 +25,9 @@
             </thead>
             <tbody>
             <tr th:each="item : ${items}">
-                <td th:text="${item.maHoaDon}"></td>
+                <td><span class="code-badge" th:text="${item.maHoaDon}"></span></td>
                 <td th:text="${item.ngayThuTien}"></td>
-                <td th:text="${item.soTienThu}"></td>
+                <td class="price-cell" th:text="${item.soTienThu != null ? #numbers.formatInteger(item.soTienThu, 0, 'POINT') + ' VND' : ''}"></td>
                 <td th:text="${item.ctDatPhong != null ? item.ctDatPhong.maCtDatPhong : ''}"></td>
                 <td th:text="${item.nhanVien != null ? item.nhanVien.tenNhanVien : ''}"></td>
                 <td>
@@ -38,6 +38,7 @@
             </tr>
             </tbody>
         </table>
+        <div th:replace="~{fragments/pagination :: pagination}"></div>
     </div>
 </div>
 </body>

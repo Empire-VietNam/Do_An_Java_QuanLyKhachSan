@@ -23,6 +23,15 @@
                     <option th:each="lp : ${loaiPhongs}" th:value="${lp.maLoaiPhong}" th:text="${lp.tenLoaiPhong}"></option>
                 </select>
             </div>
+            <div class="form-row">
+                <label>Trạng thái</label>
+                <select th:field="*{trangThai}" required>
+                    <option value="Trống">Trống</option>
+                    <option value="Đã đặt">Đã đặt</option>
+                    <option value="Đang thuê">Đang thuê</option>
+                    <option value="Bảo trì">Bảo trì</option>
+                </select>
+            </div>
             <button class="btn" type="submit">Lưu</button>
             <a class="btn secondary" href="/phong">Quay lại</a>
         </form>

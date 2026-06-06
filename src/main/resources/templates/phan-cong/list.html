@@ -24,7 +24,7 @@
             </thead>
             <tbody>
             <tr th:each="item : ${items}">
-                <td th:text="${item.maPhanCong}"></td>
+                <td><span class="code-badge" th:text="${item.maPhanCong}"></span></td>
                 <td th:text="${item.ngayPhanCong}"></td>
                 <td th:text="${item.loaiCongViec}"></td>
                 <td th:text="${item.nhanVien != null ? item.nhanVien.tenNhanVien : ''}"></td>
@@ -36,6 +36,7 @@
             </tr>
             </tbody>
         </table>
+        <div th:replace="~{fragments/pagination :: pagination}"></div>
     </div>
 </div>
 </body>

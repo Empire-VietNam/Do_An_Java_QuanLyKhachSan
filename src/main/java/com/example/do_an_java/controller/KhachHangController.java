@@ -2,6 +2,7 @@ package com.example.do_an_java.controller;
 
 import com.example.do_an_java.entity.KhachHang;
 import com.example.do_an_java.repository.KhachHangRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +17,14 @@ public class KhachHangController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "") String keyword, Model model) {
+    public String list(@RequestParam(defaultValue = "") String keyword,
+                       @RequestParam(defaultValue = "0") int page,
+                       Model model,
+                       HttpServletRequest request) {
         model.addAttribute("keyword", keyword);
-        model.addAttribute("items", keyword.isBlank()
+        PaginationUtil.paginate(model, keyword.isBlank()
                 ? khachHangRepository.findAll()
-                : khachHangRepository.findByHoTenContainingIgnoreCase(keyword));
+                : khachHangRepository.findByHoTenContainingIgnoreCase(keyword), page, request);
         return "khach-hang/list";
     }
 
