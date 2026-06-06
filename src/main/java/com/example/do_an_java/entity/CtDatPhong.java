@@ -31,6 +31,18 @@ public class CtDatPhong {
     @JoinColumn(name = "MaNhanVien")
     private NhanVien nhanVien;
 
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TrangThai")
+    private TrangThaiDatPhong trangThai = TrangThaiDatPhong.DA_DAT;
+
+    // Constructors
+    public CtDatPhong() {
+        this.ngayThucHien = LocalDate.now();
+        this.trangThai = TrangThaiDatPhong.DA_DAT;
+    }
+
+    // Getters and Setters
     public Integer getMaCtDatPhong() { return maCtDatPhong; }
     public void setMaCtDatPhong(Integer maCtDatPhong) { this.maCtDatPhong = maCtDatPhong; }
 
@@ -51,4 +63,7 @@ public class CtDatPhong {
 
     public NhanVien getNhanVien() { return nhanVien; }
     public void setNhanVien(NhanVien nhanVien) { this.nhanVien = nhanVien; }
+
+    public TrangThaiDatPhong getTrangThai() { return trangThai; }
+    public void setTrangThai(TrangThaiDatPhong trangThai) { this.trangThai = trangThai; }
 }

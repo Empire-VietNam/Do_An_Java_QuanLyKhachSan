@@ -21,7 +21,7 @@
                 <select th:field="*{dichVu.maDichVu}" required>
                     <option value="">-- Chọn dịch vụ --</option>
                     <option th:each="dv : ${dichVus}" th:value="${dv.maDichVu}"
-                            th:text="${dv.tenDichVu + ' - ' + #numbers.formatInteger(dv.giaDichVu, 0, 'POINT') + ' VND'}"></option>
+                            th:text="${dv.tenDichVu + ' - ' + dv.giaDichVu}"></option>
                 </select>
             </div>
             <div class="form-row">

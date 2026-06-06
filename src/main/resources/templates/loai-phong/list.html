@@ -11,9 +11,6 @@
 
     <h1>Quản lý loại phòng</h1>
     <div class="card">
-        <div class="alert" th:if="${error}" th:text="${error}"></div>
-        <div class="alert success" th:if="${success}" th:text="${success}"></div>
-
         <a class="btn" href="/loai-phong/them">+ Thêm loại phòng</a>
         <table class="table" style="margin-top:14px">
             <thead>
@@ -27,9 +24,9 @@
             </thead>
             <tbody>
             <tr th:each="item : ${items}">
-                <td><span class="code-badge" th:text="${item.maLoaiPhong}"></span></td>
+                <td th:text="${item.maLoaiPhong}"></td>
                 <td th:text="${item.tenLoaiPhong}"></td>
-                <td class="price-cell" th:text="${item.giaPhong != null ? #numbers.formatInteger(item.giaPhong, 0, 'POINT') + ' VND' : ''}"></td>
+                <td th:text="${item.giaPhong}"></td>
                 <td th:text="${item.moTa}"></td>
                 <td>
                     <a class="btn small secondary" th:href="@{/loai-phong/sua/{id}(id=${item.maLoaiPhong})}">Sửa</a>
@@ -39,7 +36,6 @@
             </tr>
             </tbody>
         </table>
-        <div th:replace="~{fragments/pagination :: pagination}"></div>
     </div>
 </div>
 </body>

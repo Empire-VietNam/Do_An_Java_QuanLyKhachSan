@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chọn khách hàng</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-box input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #2196f3; color: white; }
+        .btn-success { background: #4caf50; color: white; }
+        .btn-secondary { background: #666; color: white; }
+        .btn-small { padding: 4px 10px; font-size: 12px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .alert { padding: 12px; border-radius: 6px; margin-bottom: 16px; }
+        .alert-success { background: #e8f5e9; color: #2e7d32; border-left: 4px solid #2e7d32; }
+        .alert-error { background: #ffebee; color: #c62828; border-left: 4px solid #c62828; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .tab { padding: 10px 20px; background: #f0f0f0; border: none; border-radius: 6px; cursor: pointer; }
+        .tab.active { background: #2196f3; color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="container">
+
+    <h1>📋 Chọn khách hàng để đặt phòng</h1>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+    <div class="card">
+        <!-- Tab -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('khachCu')">📋 Chọn khách cũ</button>
+            <button class="tab" onclick="showTab('khachMoi')">➕ Thêm khách mới</button>
+        </div>
+
+        <!-- Tab 1: Chọn khách cũ -->
+        <div id="khachCuPanel" class="tab-panel active">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Tìm theo tên, CMND hoặc số điện thoại...">
+                <button class="btn btn-primary" onclick="timKiem()">Tìm kiếm</button>
+                <button class="btn btn-secondary" onclick="loadAll()">Tất cả</button>
+            </div>
+
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Họ tên</th>
+                        <th>Điện thoại</th>
+                        <th>CMND</th>
+                        <th>Email</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="khachHangTable">
+                    <tr th:each="kh : ${khachHangs}">
+                        <td th:text="${kh.maKhachHang}">--</td>
+                        <td th:text="${kh.hoTen}">--</td>
+                        <td th:text="${kh.dienThoai}">--</td>
+                        <td th:text="${kh.cmnd}">--</td>
+                        <td th:text="${kh.email}">--</td>
+                        <td>
+                            <button class="btn btn-success btn-small"
+                                    onclick="chonKhachHang(${kh.maKhachHang}, '${kh.hoTen}')">
+                                ✅ Chọn
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${khachHangs.empty}">
+                        <td colspan="6" style="text-align:center">📭 Chưa có khách hàng nào. Hãy thêm mới!</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab 2: Thêm khách mới -->
+        <div id="khachMoiPanel" class="tab-panel">
+            <form id="formThemKhachMoi">
+                <div class="form-group">
+                    <label>Họ tên <span style="color:red">*</span></label>
+                    <input type="text" id="hoTen" required>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại <span style="color:red">*</span></label>
+                    <input type="text" id="dienThoai" required>
+                </div>
+                <div class="form-group">
+                    <label>CMND/CCCD</label>
+                    <input type="text" id="cmnd">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email">
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <input type="text" id="diaChi">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="themKhachMoi()">➕ Thêm khách hàng</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu khách hàng từ server (Thymeleaf sẽ render)
+    var danhSachKhachHang = /*[[${khachHangs}]]*/ [];
+
+    // Hiển thị tab
+    function showTab(tabName) {
+        // Ẩn tất cả panel
+        document.getElementById('khachCuPanel').classList.remove('active');
+        document.getElementById('khachMoiPanel').classList.remove('active');
+        // Bỏ active của tất cả tab
+        var tabs = document.getElementsByClassName('tab');
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove('active');
+        }
+        // Hiện panel được chọn
+        document.getElementById(tabName + 'Panel').classList.add('active');
+        // Active tab được chọn
+        event.target.classList.add('active');
+    }
+
+    // Hiển thị bảng khách hàng
+    function renderTable(data) {
+        var tbody = document.getElementById('khachHangTable');
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">📭 Không tìm thấy khách hàng nào</td></tr>';
+            return;
+        }
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            var kh = data[i];
+            html += '<tr>' +
+                '<td>' + (kh.maKhachHang || '') + '</td>' +
+                '<td>' + (kh.hoTen || '') + '</td>' +
+                '<td>' + (kh.dienThoai || '') + '</td>' +
+                '<td>' + (kh.cmnd || '') + '</td>' +
+                '<td>' + (kh.email || '') + '</td>' +
+                '<td><button class="btn btn-success btn-small" onclick="chonKhachHang(' + kh.maKhachHang + ', \'' + (kh.hoTen || '').replace(/'/g, "\\'") + '\')">✅ Chọn</button></td>' +
+                '</tr>';
+        }
+        tbody.innerHTML = html;
+    }
+
+    // Tìm kiếm khách hàng
+    function timKiem() {
+        var keyword = document.getElementById('searchInput').value.toLowerCase();
+        if (!keyword) {
+            renderTable(danhSachKhachHang);
+            return;
+        }
+        var filtered = danhSachKhachHang.filter(function(kh) {
+            return (kh.hoTen && kh.hoTen.toLowerCase().includes(keyword)) ||
+                   (kh.cmnd && kh.cmnd.toLowerCase().includes(keyword)) ||
+                   (kh.dienThoai && kh.dienThoai.includes(keyword));
+        });
+        renderTable(filtered);
+    }
+
+    // Tải lại tất cả
+    function loadAll() {
+        document.getElementById('searchInput').value = '';
+        renderTable(danhSachKhachHang);
+    }
+
+    // Chọn khách hàng
+    function chonKhachHang(maKhachHang, tenKhachHang) {
+        // Chuyển sang trang tạo đơn với khách đã chọn
+        window.location.href = '/dat-phong/tao-don/' + maKhachHang;
+    }
+
+    // Thêm khách hàng mới
+    function themKhachMoi() {
+        var hoTen = document.getElementById('hoTen').value.trim();
+        var dienThoai = document.getElementById('dienThoai').value.trim();
+        var cmnd = document.getElementById('cmnd').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var diaChi = document.getElementById('diaChi').value.trim();
+
+        if (hoTen === '') {
+            alert('❌ Vui lòng nhập họ tên!');
+            return;
+        }
+        if (dienThoai === '') {
+            alert('❌ Vui lòng nhập số điện thoại!');
+            return;
+        }
+
+        // Gửi request thêm khách hàng
+        fetch('/dat-phong/them-khach-moi-ajax', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                hoTen: hoTen,
+                dienThoai: dienThoai,
+                cmnd: cmnd,
+                email: email,
+                diaChi: diaChi
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ Đã thêm khách hàng: ' + hoTen);
+                // Thêm vào danh sách
+                danhSachKhachHang.push(data.khachHang);
+                // Chuyển sang tab khách cũ
+                showTab('khachCu');
+                // Làm mới bảng
+                renderTable(danhSachKhachHang);
+                // Reset form
+                document.getElementById('hoTen').value = '';
+                document.getElementById('dienThoai').value = '';
+                document.getElementById('cmnd').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('diaChi').value = '';
+            } else {
+                alert('❌ ' + (data.message || 'Có lỗi xảy ra!'));
+            }
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+            alert('❌ Có lỗi xảy ra, vui lòng thử lại!');
+        });
+    }
+
+    // Khởi tạo bảng khi trang load
+    document.addEventListener('DOMContentLoaded', function() {
+        renderTable(danhSachKhachHang);
+    });
+</script>
+</body>
+</html>

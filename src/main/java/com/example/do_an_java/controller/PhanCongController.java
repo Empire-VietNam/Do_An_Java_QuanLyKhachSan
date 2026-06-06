@@ -3,7 +3,6 @@ package com.example.do_an_java.controller;
 import com.example.do_an_java.entity.BangPhanCong;
 import com.example.do_an_java.repository.BangPhanCongRepository;
 import com.example.do_an_java.repository.NhanVienRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +20,8 @@ public class PhanCongController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, Model model, HttpServletRequest request) {
-        PaginationUtil.paginate(model, bangPhanCongRepository.findAll(), page, request);
+    public String list(Model model) {
+        model.addAttribute("items", bangPhanCongRepository.findAll());
         return "phan-cong/list";
     }
 

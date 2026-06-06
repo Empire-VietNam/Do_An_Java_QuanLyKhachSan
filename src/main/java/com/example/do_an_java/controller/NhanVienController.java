@@ -4,7 +4,6 @@ import com.example.do_an_java.entity.ChucVu;
 import com.example.do_an_java.entity.NhanVien;
 import com.example.do_an_java.repository.ChucVuRepository;
 import com.example.do_an_java.repository.NhanVienRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,14 +26,11 @@ public class NhanVienController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "") String keyword,
-                       @RequestParam(defaultValue = "0") int page,
-                       Model model,
-                       HttpServletRequest request) {
+    public String list(@RequestParam(defaultValue = "") String keyword, Model model) {
         model.addAttribute("keyword", keyword);
-        PaginationUtil.paginate(model, keyword == null || keyword.isBlank()
+        model.addAttribute("items", keyword == null || keyword.isBlank()
                 ? nhanVienRepository.findAll()
-                : nhanVienRepository.findByTenNhanVienContainingIgnoreCase(keyword), page, request);
+                : nhanVienRepository.findByTenNhanVienContainingIgnoreCase(keyword));
         return "nhan-vien/list";
     }
 

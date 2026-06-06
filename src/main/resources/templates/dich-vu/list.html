@@ -30,9 +30,9 @@
             </thead>
             <tbody>
             <tr th:each="item : ${items}">
-                <td><span class="code-badge" th:text="${item.maDichVu}"></span></td>
+                <td th:text="${item.maDichVu}"></td>
                 <td th:text="${item.tenDichVu}"></td>
-                <td class="price-cell" th:text="${item.giaDichVu != null ? #numbers.formatInteger(item.giaDichVu, 0, 'POINT') + ' VND' : ''}"></td>
+                <td th:text="${item.giaDichVu}"></td>
                 <td>
                     <a class="btn small secondary" th:href="@{/dich-vu/sua/{id}(id=${item.maDichVu})}">Sửa</a>
                     <a class="btn small danger" th:href="@{/dich-vu/xoa/{id}(id=${item.maDichVu})}"
@@ -41,7 +41,6 @@
             </tr>
             </tbody>
         </table>
-        <div th:replace="~{fragments/pagination :: pagination}"></div>
     </div>
 </div>
 </body>

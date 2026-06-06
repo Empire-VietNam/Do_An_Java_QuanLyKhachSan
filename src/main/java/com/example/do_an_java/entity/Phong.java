@@ -18,15 +18,4 @@ public class Phong {
 
     public LoaiPhong getLoaiPhong() { return loaiPhong; }
     public void setLoaiPhong(LoaiPhong loaiPhong) { this.loaiPhong = loaiPhong; }
-
-    @Column(name = "TrangThai", length = 30)
-    private String trangThai;
-
-    public String getTrangThai() {
-        return trangThai;
-    }
-
-    public void setTrangThai(String trangThai) {
-        this.trangThai = trangThai;
-    }
 }

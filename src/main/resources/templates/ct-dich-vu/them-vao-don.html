@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm dịch vụ vào đơn đặt phòng</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="container">
+
+    <h1>➕ Thêm dịch vụ vào đơn đặt phòng</h1>
+
+    <div class="card" th:if="${datPhong != null}">
+        <h3>Thông tin đơn đặt phòng</h3>
+        <p><strong>Mã đơn:</strong> <span th:text="${datPhong.maCtDatPhong}"></span></p>
+        <p><strong>Khách hàng:</strong> <span th:text="${datPhong.khachHang.hoTen}"></span></p>
+        <p><strong>Phòng:</strong> <span th:text="${datPhong.phong.maPhong}"></span></p>
+        <p><strong>Ngày ở:</strong> <span th:text="${datPhong.ngayNhan}"></span> → <span th:text="${datPhong.ngayTra}"></span></p>
+    </div>
+
+    <div class="card">
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <form method="post" th:action="@{/ct-dich-vu/luu-vao-don(maCtDatPhong=${maCtDatPhong})}" th:object="${item}">
+
+            <div class="form-row">
+                <label>Chọn dịch vụ <span style="color:red">*</span></label>
+                <select th:field="*{dichVu.maDichVu}" required>
+                    <option value="">-- Chọn dịch vụ --</option>
+                    <option th:each="dv : ${dichVus}"
+                            th:value="${dv.maDichVu}"
+                            th:text="${dv.tenDichVu + ' - ' + #numbers.formatInteger(dv.giaDichVu, 0, 'COMMA') + ' VND'}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label>Số lượng <span style="color:red">*</span></label>
+                <input type="number" th:field="*{soLuong}" min="1" value="1" required>
+                <small class="hint">Nhập số lượng cần sử dụng</small>
+            </div>
+
+            <div class="form-row">
+                <label>Thành tiền (dự kiến)</label>
+                <input type="text" id="thanhTien" readonly disabled
+                       style="background:#f0f0f0; font-weight:bold">
+                <small class="hint">Sẽ tự động tính sau khi lưu</small>
+            </div>
+
+            <button class="btn" type="submit">✅ Thêm dịch vụ</button>
+            <a class="btn secondary" th:href="@{/dat-phong/chi-tiet/{id}(id=${maCtDatPhong})}">↩️ Quay lại</a>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Tính toán thử thành tiền khi chọn dịch vụ và nhập số lượng
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectDichVu = document.querySelector('select[name="dichVu.maDichVu"]');
+        const inputSoLuong = document.querySelector('input[name="soLuong"]');
+        const inputThanhTien = document.querySelector('#thanhTien');
+
+        // Lấy danh sách giá dịch vụ từ server
+        const giaDichVuMap = new Map();
+        [[${dichVus}]].forEach(function(dv) {
+            giaDichVuMap.set(dv.maDichVu, dv.giaDichVu);
+        });
+
+        function tinhThanhTien() {
+            const maDichVu = selectDichVu.value;
+            const soLuong = parseInt(inputSoLuong.value) || 0;
+
+            if (maDichVu && soLuong > 0) {
+                const gia = giaDichVuMap.get(parseInt(maDichVu)) || 0;
+                const tong = gia * soLuong;
+                inputThanhTien.value = tong.toLocaleString('vi-VN') + ' VND';
+            } else {
+                inputThanhTien.value = '';
+            }
+        }
+
+        selectDichVu.addEventListener('change', tinhThanhTien);
+        inputSoLuong.addEventListener('input', tinhThanhTien);
+        tinhThanhTien();
+    });
+</script>
+
+<style>
+    .hint {
+        display: block;
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+    }
+    .alert.error {
+        background: #fee;
+        color: #c00;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+        border-left: 4px solid #c00;
+    }
+</style>
+</body>
+</html>

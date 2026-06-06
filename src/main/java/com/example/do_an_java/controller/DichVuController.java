@@ -2,7 +2,6 @@ package com.example.do_an_java.controller;
 
 import com.example.do_an_java.entity.DichVu;
 import com.example.do_an_java.repository.DichVuRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +16,11 @@ public class DichVuController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "") String keyword,
-                       @RequestParam(defaultValue = "0") int page,
-                       Model model,
-                       HttpServletRequest request) {
+    public String list(@RequestParam(defaultValue = "") String keyword, Model model) {
         model.addAttribute("keyword", keyword);
-        PaginationUtil.paginate(model, keyword.isBlank()
+        model.addAttribute("items", keyword.isBlank()
                 ? dichVuRepository.findAll()
-                : dichVuRepository.findByTenDichVuContainingIgnoreCase(keyword), page, request);
+                : dichVuRepository.findByTenDichVuContainingIgnoreCase(keyword));
         return "dich-vu/list";
     }
 

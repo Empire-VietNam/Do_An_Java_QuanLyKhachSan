@@ -19,9 +19,6 @@ public class LoaiPhong {
     @Column(name = "MoTa", length = 255)
     private String moTa;
 
-    @Column(name = "DaXoa")
-    private Boolean daXoa = false;
-
     public Integer getMaLoaiPhong() { return maLoaiPhong; }
     public void setMaLoaiPhong(Integer maLoaiPhong) { this.maLoaiPhong = maLoaiPhong; }
 
@@ -33,7 +30,4 @@ public class LoaiPhong {
 
     public String getMoTa() { return moTa; }
     public void setMoTa(String moTa) { this.moTa = moTa; }
-
-    public Boolean getDaXoa() { return daXoa; }
-    public void setDaXoa(Boolean daXoa) { this.daXoa = daXoa; }
 }

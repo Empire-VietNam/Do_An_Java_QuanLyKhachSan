@@ -4,7 +4,6 @@ import com.example.do_an_java.entity.HoaDon;
 import com.example.do_an_java.repository.CtDatPhongRepository;
 import com.example.do_an_java.repository.HoaDonRepository;
 import com.example.do_an_java.repository.NhanVienRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +24,8 @@ public class HoaDonController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, Model model, HttpServletRequest request) {
-        PaginationUtil.paginate(model, hoaDonRepository.findAll(), page, request);
+    public String list(Model model) {
+        model.addAttribute("items", hoaDonRepository.findAll());
         return "hoa-don/list";
     }
 

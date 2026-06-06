@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "CTDICHVU")
 public class CtDichVu {
+
     @EmbeddedId
     private CtDichVuId id = new CtDichVuId();
 
@@ -27,6 +28,18 @@ public class CtDichVu {
     @Column(name = "TongTienDichVu")
     private Integer tongTienDichVu;
 
+    // Tự động tính tổng tiền trước khi lưu
+    @PrePersist
+    @PreUpdate
+    public void tinhTongTien() {
+        if (dichVu != null && soLuong != null && soLuong > 0) {
+            this.tongTienDichVu = dichVu.getGiaDichVu() * soLuong;
+        } else {
+            this.tongTienDichVu = 0;
+        }
+    }
+
+    // Getters and Setters
     public CtDichVuId getId() { return id; }
     public void setId(CtDichVuId id) { this.id = id; }
 
