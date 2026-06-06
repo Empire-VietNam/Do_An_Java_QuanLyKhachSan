@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch sử đặt phòng</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="container">
+
+    <h1>📜 Lịch sử đặt phòng</h1>
+
+    <!-- Thông tin khách hàng -->
+    <div class="card">
+        <h2>👤 Thông tin khách hàng</h2>
+        <table class="info-table">
+            <tr>
+                <th>Mã khách hàng:</th>
+                <td th:text="${khachHang.maKhachHang}">--</td>
+                <th>Họ tên:</th>
+                <td th:text="${khachHang.hoTen}">--</td>
+            </tr>
+            <tr>
+                <th>Điện thoại:</th>
+                <td th:text="${khachHang.dienThoai}">--</td>
+                <th>CMND/CCCD:</th>
+                <td th:text="${khachHang.cmnd}">--</td>
+            </tr>
+            <tr>
+                <th>Email:</th>
+                <td th:text="${khachHang.email}">--</td>
+                <th>Địa chỉ:</th>
+                <td th:text="${khachHang.diaChi}">--</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Danh sách lịch sử đặt phòng -->
+    <div class="card">
+        <h2>🏨 Các đơn đặt phòng</h2>
+
+        <div th:if="${lichSu.empty}" style="text-align:center; padding:40px; color:#666;">
+            📭 Khách hàng chưa có lịch sử đặt phòng nào.
+        </div>
+
+        <table class="table" th:if="${!lichSu.empty}">
+            <thead>
+            <tr>
+                <th>Mã đơn</th>
+                <th>Phòng</th>
+                <th>Loại phòng</th>
+                <th>Ngày nhận</th>
+                <th>Ngày trả</th>
+                <th>Trạng thái</th>
+                <th>Chi tiết</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dp : ${lichSu}">
+                <td th:text="${dp.maCtDatPhong}">--</td>
+                <td th:text="${dp.phong != null ? dp.phong.maPhong : 'N/A'}">--</td>
+                <td th:text="${dp.phong != null && dp.phong.loaiPhong != null ? dp.phong.loaiPhong.tenLoaiPhong : 'N/A'}">--</td>
+                <!-- 🔥 HIỂN THỊ NGÀY TRỰC TIẾP, KHÔNG FORMAT -->
+                <td th:text="${dp.ngayNhan}">--</td>
+                <td th:text="${dp.ngayTra}">--</td>
+                <td>
+                        <span class="status-badge"
+                              th:classappend="${dp.trangThai.name() == 'DA_DAT' ? 'status-da-dat' :
+                                             (dp.trangThai.name() == 'DANG_O' ? 'status-dang-o' :
+                                             (dp.trangThai.name() == 'DA_TRA' ? 'status-da-tra' : 'status-da-huy'))}"
+                              th:text="${dp.trangThai.tenHienThi}">
+                        </span>
+                </td>
+                <td>
+                    <a class="btn small" th:href="@{/dat-phong/chi-tiet/{id}(id=${dp.maCtDatPhong})}">
+                        📋 Xem chi tiết
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Nút quay lại -->
+    <div style="margin-top: 20px;">
+        <a class="btn secondary" href="/khach-hang">← Quay lại danh sách khách hàng</a>
+    </div>
+</div>
+
+<style>
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .info-table th, .info-table td {
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    .info-table th {
+        width: 120px;
+        background: #f5f5f5;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .status-da-dat { background: #ff9800; color: #fff; }
+    .status-dang-o { background: #2196f3; color: #fff; }
+    .status-da-tra { background: #4caf50; color: #fff; }
+    .status-da-huy { background: #f44336; color: #fff; }
+    .btn.small {
+        padding: 4px 8px;
+        font-size: 12px;
+        margin: 0;
+    }
+</style>
+</body>
+</html>

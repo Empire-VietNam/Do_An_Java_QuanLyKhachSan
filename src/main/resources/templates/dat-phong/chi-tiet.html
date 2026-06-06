@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết đặt phòng</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="container">
+    <h1>📋 Chi tiết đơn đặt phòng #<span th:text="${datPhong.maCtDatPhong}"></span></h1>
+
+    <div th:if="${success}" class="alert success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+    <!-- Thông tin khách hàng -->
+    <div class="card">
+        <h2>👤 Thông tin khách hàng</h2>
+        <table class="info-table">
+            <tr>
+                <th>Họ tên:</th>
+                <td th:text="${datPhong.khachHang.hoTen}">--</td>
+                <th>Điện thoại:</th>
+                <td th:text="${datPhong.khachHang.dienThoai}">--</td>
+            </tr>
+            <tr>
+                <th>CMND/CCCD:</th>
+                <td th:text="${datPhong.khachHang.cmnd}">--</td>
+                <th>Email:</th>
+                <td th:text="${datPhong.khachHang.email}">--</td>
+            </tr>
+            <tr>
+                <th>Địa chỉ:</th>
+                <td colspan="3" th:text="${datPhong.khachHang.diaChi}">--</td>
+            </tr>
+        </table>
+        <a class="btn small" th:href="@{/khach-hang/lich-su/{id}(id=${datPhong.khachHang.maKhachHang})}">
+            📜 Xem lịch sử đặt phòng
+        </a>
+    </div>
+
+    <!-- Thông tin phòng và thời gian -->
+    <div class="card">
+        <h2>🏠 Thông tin phòng</h2>
+        <table class="info-table">
+            <tr>
+                <th>Số phòng:</th>
+                <td th:text="${datPhong.phong.maPhong}">--</td>
+                <th>Loại phòng:</th>
+                <td th:text="${datPhong.phong.loaiPhong.tenLoaiPhong}">--</td>
+            </tr>
+            <tr>
+                <th>Giá/đêm:</th>
+                <td th:text="${#numbers.formatInteger(datPhong.phong.loaiPhong.giaPhong, 0, 'COMMA')} + ' VND'">--</td>
+                <th>Số đêm:</th>
+                <td th:text="${soNgay}">--</td>
+            </tr>
+            <tr>
+                <th>Ngày nhận:</th>
+                <td th:text="${datPhong.ngayNhan}">--</td>
+                <th>Ngày trả:</th>
+                <td th:text="${datPhong.ngayTra}">--</td>
+            </tr>
+            <tr>
+                <th>Trạng thái:</th>
+                <td colspan="3">
+                    <span class="status-badge"
+                          th:classappend="${datPhong.trangThai.name() == 'DA_DAT' ? 'status-da-dat' :
+                                         (datPhong.trangThai.name() == 'DANG_O' ? 'status-dang-o' :
+                                         (datPhong.trangThai.name() == 'DA_TRA' ? 'status-da-tra' : 'status-da-huy'))}"
+                          th:text="${datPhong.trangThai.tenHienThi}">
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Dịch vụ đã dùng -->
+    <div class="card">
+        <h2>🍽️ Dịch vụ đã sử dụng</h2>
+        <a class="btn small" th:href="@{/ct-dich-vu/them-vao-don(maCtDatPhong=${datPhong.maCtDatPhong})}">
+            + Thêm dịch vụ
+        </a>
+
+        <table class="table" style="margin-top:14px">
+            <thead>
+            <tr>
+                <th>Tên dịch vụ</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+                <th>Xóa</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dv : ${dichVuDaDung}">
+                <td th:text="${dv.dichVu.tenDichVu}">--</td>
+                <td th:text="${dv.soLuong}">--</td>
+                <td th:text="${#numbers.formatInteger(dv.dichVu.giaDichVu, 0, 'COMMA')} + ' VND'">--</td>
+                <td th:text="${#numbers.formatInteger(dv.tongTienDichVu, 0, 'COMMA')} + ' VND'">--</td>
+                <td>
+                    <a class="btn small danger"
+                       th:href="@{/ct-dich-vu/xoa(maDichVu=${dv.dichVu.maDichVu}, maCtDatPhong=${dv.ctDatPhong.maCtDatPhong})}"
+                       onclick="return confirm('Xóa dịch vụ này?')">Xóa</a>
+                </td>
+            </tr>
+            <tr th:if="${dichVuDaDung.empty}">
+                <td colspan="5" style="text-align:center">📭 Chưa có dịch vụ nào</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tổng tiền -->
+    <div class="card total-card">
+        <h2>💰 Tổng thanh toán</h2>
+        <table class="total-table">
+            <tr>
+                <th>Tiền phòng:</th>
+                <td th:text="${#numbers.formatInteger(tienPhong, 0, 'COMMA')} + ' VND'">--</td>
+            </tr>
+            <tr>
+                <th>Tiền dịch vụ:</th>
+                <td th:text="${#numbers.formatInteger(tongTienDichVu, 0, 'COMMA')} + ' VND'">--</td>
+            </tr>
+            <tr class="total-row">
+                <th>TỔNG CỘNG:</th>
+                <td th:text="${#numbers.formatInteger(tongCong, 0, 'COMMA')} + ' VND'">--</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="margin-top:20px; display:flex; gap:10px;">
+        <a class="btn" href="/dat-phong">← Quay lại danh sách</a>
+        <a class="btn secondary" th:href="@{/dat-phong/sua/{id}(id=${datPhong.maCtDatPhong})}">✏️ Sửa đơn</a>
+    </div>
+</div>
+
+<style>
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .info-table th, .info-table td {
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    .info-table th {
+        width: 120px;
+        background: #f5f5f5;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .status-da-dat { background: #ff9800; color: #fff; }
+    .status-dang-o { background: #2196f3; color: #fff; }
+    .status-da-tra { background: #4caf50; color: #fff; }
+    .status-da-huy { background: #f44336; color: #fff; }
+    .total-card {
+        background: #e3f2fd;
+    }
+    .total-table {
+        width: 100%;
+        max-width: 400px;
+    }
+    .total-table th, .total-table td {
+        padding: 8px 12px;
+    }
+    .total-row {
+        font-size: 20px;
+        font-weight: bold;
+        border-top: 2px solid #2196f3;
+    }
+    .btn.small {
+        padding: 4px 8px;
+        font-size: 12px;
+        margin: 0 2px;
+    }
+    .alert.success {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+        border-left: 4px solid #2e7d32;
+    }
+    .alert.error {
+        background: #ffebee;
+        color: #c62828;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+        border-left: 4px solid #c62828;
+    }
+</style>
+</body>
+</html>

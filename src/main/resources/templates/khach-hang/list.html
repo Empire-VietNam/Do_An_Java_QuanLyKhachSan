@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Khách hàng</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="container">
+
+    <h1>Quản lý khách hàng</h1>
+    <div class="card">
+        <!-- 🔥 CẢI TIẾN: Form tìm kiếm với 3 lựa chọn -->
+        <div class="actions" style="justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <form class="search" method="get" action="/khach-hang" style="display:flex; gap:10px; flex-wrap:wrap;">
+                <select name="searchType" style="padding:8px; border-radius:6px; border:1px solid #ddd;">
+                    <option value="hoTen" th:selected="${searchType == 'hoTen'}">🔍 Theo tên</option>
+                    <option value="cmnd" th:selected="${searchType == 'cmnd'}">🆔 Theo CMND/CCCD</option>
+                    <option value="dienThoai" th:selected="${searchType == 'dienThoai'}">📱 Theo số điện thoại</option>
+                </select>
+                <input type="text" name="keyword" placeholder="Nhập từ khóa..."
+                       th:value="${keyword}" style="padding:8px; width:250px; border-radius:6px; border:1px solid #ddd;">
+                <button class="btn" type="submit">Tìm kiếm</button>
+                <a class="btn secondary" href="/khach-hang">Xóa tìm kiếm</a>
+            </form>
+            <a class="btn" href="/khach-hang/them">+ Thêm khách hàng</a>
+        </div>
+
+        <!-- Hiển thị kết quả tìm kiếm -->
+        <div th:if="${keyword != null and keyword != ''}" style="margin-top:10px; padding:8px; background:#e3f2fd; border-radius:6px;">
+            📌 Kết quả tìm kiếm: <strong th:text="${keyword}"></strong>
+            (theo <span th:text="${searchType == 'hoTen' ? 'tên' : (searchType == 'cmnd' ? 'CMND' : 'SĐT')}"></span>)
+        </div>
+
+        <table class="table" style="margin-top:14px">
+            <thead>
+            <tr>
+                <th>Mã</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Địa chỉ</th>
+                <th>Điện thoại</th>
+                <th>CMND</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.maKhachHang}"></td>
+                <td th:text="${item.hoTen}"></td>
+                <td th:text="${item.email}"></td>
+                <td th:text="${item.diaChi}"></td>
+                <td th:text="${item.dienThoai}"></td>
+                <td th:text="${item.cmnd}"></td>
+                <td>
+                    <a class="btn small secondary" th:href="@{/khach-hang/sua/{id}(id=${item.maKhachHang})}">Sửa</a>
+                    <a class="btn small danger" th:href="@{/khach-hang/xoa/{id}(id=${item.maKhachHang})}"
+                       onclick="return confirm('Xóa khách hàng này?')">Xóa</a>
+                    <a class="btn small" th:href="@{/khach-hang/lich-su/{id}(id=${item.maKhachHang})}">Lịch sử</a>
+                </td>
+            </tr>
+            <tr th:if="${items.empty}">
+                <td colspan="7" style="text-align:center">📭 Không tìm thấy khách hàng nào</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .btn.small {
+        padding: 4px 8px;
+        font-size: 12px;
+        margin: 0 2px;
+    }
+</style>
+</body>
+</html>

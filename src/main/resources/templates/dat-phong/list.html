@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đặt phòng</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="container">
+
+    <h1>Quản lý đặt phòng</h1>
+    <div class="card">
+        <a class="btn" href="/dat-phong/them">+ Thêm đặt phòng</a>
+        <table class="table" style="margin-top:14px">
+            <thead>
+            <tr>
+                <th>Mã CT</th>
+                <th>Ngày thực hiện</th>
+                <th>Khách hàng</th>
+                <th>Ngày nhận</th>
+                <th>Ngày trả</th>
+                <th>Phòng</th>
+                <th>Nhân viên</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.maCtDatPhong}"></td>
+                <td th:text="${item.ngayThucHien}"></td>
+                <td th:text="${item.khachHang != null ? item.khachHang.hoTen : ''}"></td>
+                <td th:text="${item.ngayNhan}"></td>
+                <td th:text="${item.ngayTra}"></td>
+                <td th:text="${item.phong != null ? item.phong.maPhong : ''}"></td>
+                <td th:text="${item.nhanVien != null ? item.nhanVien.tenNhanVien : ''}"></td>
+                <td>
+                    <a class="btn small secondary" th:href="@{/dat-phong/sua/{id}(id=${item.maCtDatPhong})}">Sửa</a>
+                    <a class="btn small danger" th:href="@{/dat-phong/xoa/{id}(id=${item.maCtDatPhong})}"
+                       onclick="return confirm('Xóa đặt phòng này?')">Xóa</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

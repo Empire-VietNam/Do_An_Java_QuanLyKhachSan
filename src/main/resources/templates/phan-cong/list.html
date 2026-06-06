@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Phân công</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="container">
+
+    <h1>Quản lý phân công</h1>
+    <div class="card">
+        <a class="btn" href="/phan-cong/them">+ Thêm phân công</a>
+        <table class="table" style="margin-top:14px">
+            <thead>
+            <tr>
+                <th>Mã</th>
+                <th>Ngày phân công</th>
+                <th>Loại công việc</th>
+                <th>Nhân viên</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.maPhanCong}"></td>
+                <td th:text="${item.ngayPhanCong}"></td>
+                <td th:text="${item.loaiCongViec}"></td>
+                <td th:text="${item.nhanVien != null ? item.nhanVien.tenNhanVien : ''}"></td>
+                <td>
+                    <a class="btn small secondary" th:href="@{/phan-cong/sua/{id}(id=${item.maPhanCong})}">Sửa</a>
+                    <a class="btn small danger" th:href="@{/phan-cong/xoa/{id}(id=${item.maPhanCong})}"
+                       onclick="return confirm('Xóa phân công này?')">Xóa</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
